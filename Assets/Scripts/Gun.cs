@@ -1,15 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using StarterAssets;
 using UnityEngine;
 
-public class PlayerAttack : MonoBehaviour
+public class Gun : MonoBehaviour
 {
     public bool _inputFire;
-    [SerializeField] Transform _player;
-    [SerializeField] Transform _camera;
     StarterAssetsInputs _input;
+    [SerializeField] Transform _camera;
     [SerializeField] float _fireRange = 200f;
+    [SerializeField] int damage = 1;
     void Start()
     {
         _input = GameObject.FindGameObjectWithTag("Player").GetComponent<StarterAssetsInputs>();
@@ -28,7 +29,14 @@ public class PlayerAttack : MonoBehaviour
     {
         RaycastHit hit;
         Physics.Raycast(_camera.position, _camera.forward, out hit, _fireRange);
-        if (hit.collider != null)
-            Debug.Log($@"{transform.name} fire to {hit.collider.name}");
+        if (hit.collider == null) return;
+        Debug.Log($@"{transform.name} fire to {hit.collider.name}");
+        if (hit.collider.tag == "Enemy") DamageEnemy(hit.collider.gameObject);
+    }
+
+    private void DamageEnemy(GameObject enemy)
+    {
+        var enemyHealth = enemy.GetComponent<EnemyHealth>();
+        enemyHealth.HPDecrease(damage);
     }
 }
