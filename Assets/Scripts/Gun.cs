@@ -11,6 +11,8 @@ public class Gun : MonoBehaviour
     [SerializeField] Transform _camera;
     [SerializeField] float _fireRange = 200f;
     [SerializeField] int damage = 1;
+    [SerializeField] ParticleSystem fireParticle;
+    [SerializeField] ParticleSystem hitParticle;
     void Start()
     {
         _input = GameObject.FindGameObjectWithTag("Player").GetComponent<StarterAssetsInputs>();
@@ -22,6 +24,7 @@ public class Gun : MonoBehaviour
         if (_input.fire)
         {
             Fire();
+            fireParticle.Play();
         }
     }
 
@@ -31,12 +34,20 @@ public class Gun : MonoBehaviour
         Physics.Raycast(_camera.position, _camera.forward, out hit, _fireRange);
         if (hit.collider == null) return;
         Debug.Log($@"{transform.name} fire to {hit.collider.name}");
-        if (hit.collider.tag == "Enemy") DamageEnemy(hit.collider.gameObject);
+        HitParticle(hit.collider.gameObject,hit.normal);
+        if (hit.collider.tag == "Enemy")
+        {
+            DamageEnemy(hit.collider.gameObject);
+        }
     }
 
     private void DamageEnemy(GameObject enemy)
     {
         var enemyHealth = enemy.GetComponent<EnemyHealth>();
         enemyHealth.HPDecrease(damage);
+    }
+
+    void HitParticle(GameObject enemy,Vector3 hitPosition) {
+        Instantiate(hitParticle, enemy.transform.position, Quaternion.LookRotation(hitPosition));
     }
 }
