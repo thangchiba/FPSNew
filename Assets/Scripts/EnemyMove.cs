@@ -9,6 +9,7 @@ public class EnemyMove : MonoBehaviour
     NavMeshAgent navMeshAgent;
     [SerializeField] Transform player;
     [SerializeField] float chaseRange = 20f;
+    [SerializeField] int damage = 1;
     float targetSpace;
     bool isProvoked = false;
     // Start is called before the first frame update
@@ -26,21 +27,31 @@ public class EnemyMove : MonoBehaviour
         {
             isProvoked = true;
         }
+        else
+        {
+            GetComponent<Animator>().SetTrigger("idle");
+        }
         if (isProvoked)
         {
-            if(targetSpace > navMeshAgent.stoppingDistance) { ChaseTarget(); }
-            if(targetSpace<= navMeshAgent.stoppingDistance) { AttackTarget(); }
+            if(targetSpace < chaseRange) { ChaseTarget(); }
+            if(targetSpace<= navMeshAgent.stoppingDistance)
+            {
+                GetComponent<Animator>().SetBool("attack", true);
+            }
         }
 
     }
 
     private void AttackTarget()
     {
-        //Debug.Log($@"{name} attacking {player.name}");
+        var playerHealth = player.GetComponent<PlayerHealth>();
+        playerHealth.HPDecrease(damage);
     }
 
     private void ChaseTarget()
     {
+        GetComponent<Animator>().SetBool("attack",false);
+        GetComponent<Animator>().SetTrigger("move");
         navMeshAgent.SetDestination(player.position);
     }
 
