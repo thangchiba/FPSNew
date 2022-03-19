@@ -29,6 +29,7 @@ public class EnemyMove : MonoBehaviour
         }
         else
         {
+            isProvoked = false;
             GetComponent<Animator>().SetTrigger("idle");
         }
         if (isProvoked)

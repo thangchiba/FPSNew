@@ -75,7 +75,6 @@ namespace StarterAssets
 
 		private void Awake()
 		{
-			Application.targetFrameRate = 60;
 			// get a reference to our main camera
 			if (_mainCamera == null)
 			{
